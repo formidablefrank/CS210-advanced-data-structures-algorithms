@@ -1,0 +1,268 @@
+% This is the inner theme file of the SCL Sidebar theme, modified from the Aalborg theme.
+% Copyright (c) 2015 by John Justine Villar <john_justine.villar@upd.edu.ph>
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You can find the GNU General Public License at <http://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerinnerthemeSCLsidebar}[2015/11/15 v1.2.1 The SCL Sidebar Beamer Theme]
+
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage[UKenglish]{isodate}
+\cleanlookdateon
+
+
+%-----------------------------------------------
+% Theme options and definitions
+%-----------------------------------------------
+%%%theme options
+\DeclareOptionBeamer{left}{\def\beamer@sidebarside{left}}
+\DeclareOptionBeamer{right}{\def\beamer@sidebarside{right}}
+\ExecuteOptionsBeamer{right}
+\ProcessOptionsBeamer
+
+\def\beamer@lefttext{left} %used for comparison below
+\newlength{\beamer@plainpagewidth}
+
+%-----------------------------------------------
+%beamer specific options
+%-----------------------------------------------
+\mode<presentation>
+{
+%block environment
+       \setbeamertemplate{blocks} [rounded][shadow=true]
+       \setbeamercolor{block title}{fg=white,bg=frametitle.fg}
+       \setbeamercolor{block body}{fg=normal text.fg,bg=white}
+       \setbeamercolor{itemize item}{fg=structure.fg}
+       \setbeamertemplate{itemize item}[triangle]
+       
+\newenvironment<>{hoverblock}[1]{%
+  \setbeamertemplate{blocks}[rounded][shadow=false]
+  \setbeamercolor{block title}{bg=structure.fg,fg=white}%
+  \begin{block}#2{#1}}{\end{block}}
+       
+
+%hover environment
+\newcommand<>{\hover}[1]{\uncover#2{%
+	\begin{tikzpicture}[remember picture,overlay]%
+	\draw[fill,opacity=0.75] (current page.south west)
+	rectangle (current page.north east);
+	\node at (current page.center) {
+	\begin{minipage}[c]{0.9\linewidth}
+	{#1}
+	\end{minipage}};
+	\end{tikzpicture}}
+	}
+%--usage: (NB: overlay aware!)
+% \hover<2>{
+%      \begin{hoverblock}{A block hovering above the slide}
+%      I am visible on this slide.
+%      \end{hoverblock}
+%      }
+%----------------------------------------------------------
+
+
+
+\newcommand{\sclaffiliation}[0]{Scientific Computing Laboratory\\Department of Computer Science\\University of the Philippines Diliman}
+
+% colored hyperlinks
+\newcommand{\tref}[1]{%
+	\href{{mailto:}#1}{{\usebeamercolor[fg]{title}\tt #1}}%
+}
+	
+\newcommand{\chref}[2]{\href{#1}{{\usebeamercolor[fg]{structure}#2}}}
+
+\def\event#1{\gdef\@event{#1}}
+\def\@event{SCL Presentation}
+\def\shortevent#1{\gdef\@shortevent{#1}}
+\def\@shortevent{SCL Presentation}
+
+\renewcommand{\maketitle}{\titlepage}
+ 
+  \newcommand{\SCLtitlepagebg}{%
+    \setbeamertemplate{background}{
+      \includegraphics[width=\paperwidth,height=\paperheight]{graphics/SCLbg}
+      \tikz[overlay] \fill[fill opacity=0.25,fill=white] (0,0) rectangle (-\paperwidth,\paperheight);
+    }
+  }
+  
+  \pgfdeclareimage[height=2.5\baselineskip]{sidebarlogo}{graphics/scllogoctrtrans}
+  \logo{\pgfuseimage{sidebarlogo}}
+  \pgfdeclareimage[height=1cm]{logo1}{graphics/scllogofull} 
+  \pgfdeclareimage[height=1cm]{logo2}{graphics/dcslogo} 
+  \pgfdeclareimage[height=1cm]{logo3}{graphics/uplogo} 
+  \titlegraphic{\pgfuseimage{logo1}\hspace{0.15cm}\pgfuseimage{logo2}\hspace{0.1cm}\pgfuseimage{logo3}} 
+  
+  
+
+
+  \newcommand{\SCLDCSUPlogos}{%
+         \begin{tikzpicture}[remember picture,overlay]
+              \node[anchor=south east,yshift=0.5cm,xshift=-25.1mm,fill=white,opacity=0.35] at (current page.south east) {\phantom{\pgfuseimage{logo1}}};
+              \node[anchor=south east,yshift=0.5cm,xshift=-0.4cm] at (current page.south east) {\inserttitlegraphic};
+         \end{tikzpicture}
+  }
+
+  %custom sidebar background
+  \setbeamertemplate{sidebar right}[default]
+  \setbeamertemplate{sidebar canvas right}{\includegraphics[width=\beamer@width,height=\paperheight]{graphics/sb1}}
+    
+  
+  
+%-----------------------------------------------  
+\def\maketitle{\ifbeamer@inframe\titlepage\else\frame[plain]{\titlepage}\fi}
+
+
+\def\singleauthor{\def\titlepage{\usebeamertemplate{titlepage1}}}
+\def\multiauthors{\def\titlepage{\usebeamertemplate{titlepage2}}}
+
+
+\setbeamertemplate{titlepage1}{%
+	\begin{minipage}[b][\paperheight]{\textwidth}
+	\vspace*{11mm}
+	%\includegraphics[height=1.4cm]{lablogo}\par
+	%\vspace*{19mm}
+		\ifx\insertsubtitle\@empty%
+			{\usebeamerfont{title} \usebeamercolor[fg]{title}
+		 	\inserttitle\par}%
+			{\usebeamerfont{subtitle} \usebeamercolor[fg]{title}
+			\par}\vspace*{12mm}%
+		\else%
+			{\usebeamerfont{title} \usebeamercolor[fg]{title}
+		 	\inserttitle\par}%
+			{\usebeamerfont{subtitle} \usebeamercolor[fg]{title}
+			\insertsubtitle\par}%
+		\fi%
+  		\vspace*{12mm}
+
+  		\ifx\insertdate\@empty%
+  		\else%
+  			{\usebeamerfont{date} \usebeamercolor[fg]{date}
+  			\ifx\@event\@empty{SCL Presentation\\\insertdate}\else{\@event\\\insertdate}\fi\par}%
+  		\fi% 
+  				
+		\vfill
+
+		
+		\ifx\insertauthor\@empty%
+		\else%
+			{\usebeamerfont{author} \usebeamercolor[fg]{author}
+			\insertauthor\par}%
+		\fi%
+		\ifx\insertinstitute\@empty%
+		\else%
+			\vspace*{0.5mm}
+			{\usebeamerfont{institute} \usebeamercolor[fg]{institute}
+			\insertinstitute\par}%
+		\fi% 
+		\vspace*{7mm}
+	\end{minipage}
+}
+
+   
+\setbeamertemplate{titlepage2}{%
+	\begin{minipage}[b][\paperheight]{\textwidth}
+	\vspace*{11mm}
+	%\includegraphics[height=1.4cm]{lablogo}\par
+	%\vspace*{19mm}
+		\ifx\insertsubtitle\@empty%
+			{\usebeamerfont{title} \usebeamercolor[fg]{title}
+		 	\inserttitle\par}%
+			{\usebeamerfont{subtitle} \usebeamercolor[fg]{title}
+			\par}\vspace*{12mm}%
+		\else%
+			{\usebeamerfont{title} \usebeamercolor[fg]{title}
+		 	\inserttitle\par}%
+			{\usebeamerfont{subtitle} \usebeamercolor[fg]{title}
+			\insertsubtitle\par}%
+		\fi%
+		
+		\vfill
+
+		
+		\ifx\insertauthor\@empty%
+		\else%
+			{\usebeamerfont{author} \usebeamercolor[fg]{author}
+			\insertauthor\par}%
+		\fi%
+		\ifx\insertinstitute\@empty%
+		\else%
+			\vspace*{0.5mm}
+			{\usebeamerfont{institute} \usebeamercolor[fg]{institute}
+			\insertinstitute\par}%
+		\fi% 
+ 		\vspace*{7mm}
+
+ 		\ifx\insertdate\@empty%
+ 		\else%
+ 			{\usebeamerfont{date} \usebeamercolor[fg]{date}
+ 			\ifx\@event\@empty{SCL Presentation\\\insertdate}\else{\@event\\\insertdate}\fi\par}%
+ 		\fi% 
+		\vspace*{7mm}
+	\end{minipage}
+}
+
+%final page
+\defbeamertemplate*{final page}{text}[1]{%
+\ifx\beamer@sidebarside\beamer@lefttext% sidebar on the left
+  \setlength{\beamer@plainpagewidth}{\textwidth+\beamer@leftsidebar}%
+  \hskip-\beamer@leftsidebar%
+\else% sidebar on the right
+  \setlength{\beamer@plainpagewidth}{\textwidth+\beamer@rightsidebar}%
+\fi%
+\begin{minipage}[c][\textheight][c]{\beamer@plainpagewidth}
+  \vfill
+  \centering
+  \textcolor{SCLdarkblue}{#1}
+  \vfill
+  {\inserttitlegraphic}
+  \vspace*{\baselineskip}
+\end{minipage}
+}
+
+\newcommand{\SCLendpagebg}{%
+  \setbeamertemplate{background}{
+    \includegraphics[width=\paperwidth,height=\paperheight]{graphics/SCLbg}
+    \tikz[overlay] \fill[fill opacity=0.15,fill=SCLdarkblue] (0,0) rectangle (-\paperwidth,\paperheight);
+  }
+}
+
+\newcommand{\finalpage}[1]{
+\setbeamertemplate{final page}[text]{\Large #1}
+\usebeamertemplate{final page}
+}
+%-----------------------------------------------
+
+  
+  % use numbers instead of a picture for the references
+  \setbeamertemplate{bibliography item}[text]
+
+  %part page
+  \AtBeginPart{\frame[plain]{\partpage}} %adds a plain part page as defined below
+  \defbeamertemplate*{part page}{SCL theme}{%
+    \ifx\beamer@sidebarside\beamer@lefttext% sidebar on the left
+      \setlength{\beamer@plainpagewidth}{\textwidth+\beamer@leftsidebar}%
+      \hskip-\beamer@leftsidebar%
+    \else% sidebar on the right
+      \setlength{\beamer@plainpagewidth}{\textwidth+\beamer@rightsidebar}%
+    \fi%
+    \begin{minipage}[c][\textheight][c]{\beamer@plainpagewidth}
+      \centering
+      {\usebeamerfont{title}\usebeamercolor[fg]{author}{Part \Roman{part}}}\vspace*{\baselineskip}
+
+      {\usebeamerfont{title}\usebeamercolor[fg]{title}{\insertpart}}
+    \end{minipage}
+  }
+
+}%end of beamer specific options
+
+\mode<all>

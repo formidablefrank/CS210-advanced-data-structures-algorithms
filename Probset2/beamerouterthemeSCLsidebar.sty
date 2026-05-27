@@ -1,0 +1,304 @@
+% This is the outer theme file of the SCL Sidebar theme.
+% Copyright (c) 2015 by John Justine Villar <john_justine.villar@upd.edu.ph>
+% This file may be distributed and/or modified under the GNU Public License.
+%
+% See the file doc/licenses/LICENSE for more details.
+% <end of copyright notice>
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You can find the GNU General Public License at <http://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerouterthemeSCLsidebar}[2015/11/15 v1.2.1 The SCL Sidebar Beamer Theme]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Load required packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{tikz}
+\RequirePackage{calc}
+\RequirePackage{biblatex}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Theme options and definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%theme options
+\newlength{\beamer@width}
+\setlength{\beamer@width}{2cm}
+\DeclareOptionBeamer{width}{\beamer@width=#1}
+\DeclareOptionBeamer{left}{\def\beamer@sidebarside{left}}
+\DeclareOptionBeamer{right}{\def\beamer@sidebarside{right}}
+\DeclareOptionBeamer{hideothersubsections}[]{\beamer@nav@subsectionstyle{show/show/hide}}
+\DeclareOptionBeamer{hideallsubsections}[]{\beamer@nav@subsectionstyle{hide}}
+\DeclareOptionBeamer{hidetitle}{\def\beamer@hidetitle{true}}
+\DeclareOptionBeamer{hideauthor}{\def\beamer@hideauthor{true}}
+\DeclareOptionBeamer{hideinstitute}{\def\beamer@hideinst{true}}
+\DeclareOptionBeamer{shownavsym}{\def\beamer@shownavsym{true}}
+\ExecuteOptionsBeamer{right}
+\ProcessOptionsBeamer
+
+
+%the height of the header is 2.5 times the lineheight of the frame title
+\newlength{\beamer@height}
+\usebeamerfont{frametitle} %use the frame title font
+\setlength{\beamer@height}{2\baselineskip} 
+\reset@font %reset fonts
+\def\beamer@lefttext{left} %used for comparison below
+%width of vertical bar separating the main text from the sidebar
+\newlength{\beamer@barwidth}
+\setlength{\beamer@barwidth}{\beamer@height/12} %the bar width depends on the header height (by a factor of 10)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%beamer specific options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mode<presentation>%refers to the first four modes (beamer,handout,second and trans). That is, to all modes except the article mode
+{
+\def\custa{\fontsize{11pt}{12.1pt}\selectfont}
+\def\custb{\fontsize{7.5pt}{9pt}\selectfont}
+  %title page formatting
+  \setbeamerfont{title}{size=\Large}
+  \setbeamerfont{subtitle}{size=\large}
+  \setbeamerfont{author}{size=\custa}
+  \setbeamerfont{institute}{size=\custb}
+  %sidebar formatting
+  \setbeamerfont{title in sidebar}{series=\bfseries}
+  \setbeamerfont{section in sidebar}{series=\bfseries}
+  
+ \setbeamertemplate{bibliography item}[article]
+\renewcommand*{\bibfont}{\footnotesize}   
+
+  \ifbeamercolorempty[fg]{barcolor}{%
+    %define the SCL color if it is not defined (which may be due to that the SCL color theme is not loaded)
+    \setbeamercolor{barcolor}{use={structure,palette sidebar primary},fg=palette sidebar primary.fg,bg=structure.fg}
+  }{%
+    %aau header is defined - nothing to do
+  }
+  \setbeamersize{sidebar width \beamer@sidebarside=\beamer@width}
+  \setbeamersize{text margin left=0.5cm,text margin right=0.5cm}
+   
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %templates
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %frame title
+  \defbeamertemplate*{frametitle}{SCL theme}{%
+    \begin{minipage}[c][\beamer@height][c]{\textwidth}
+      {\usebeamercolor[fg]{frametitle}\usebeamerfont{frametitle}\insertframetitle\par}%
+      {\usebeamercolor[fg]{framesubtitle}\usebeamerfont{framesubtitle}\insertframesubtitle\par}%
+    \end{minipage}
+  }
+  
+  %sidebar
+  \defbeamertemplate*{sidebar \beamer@sidebarside}{SCL theme}{%
+    \SCLbackground%
+    \vspace{\beamer@height}%
+    \vspace{\baselineskip}\par%
+    \ifx\beamer@hidetitle\undefined% insert short title
+      \vspace{-0.7\baselineskip}
+      \hspace{0.05\beamer@width}%
+      {% 
+        \usebeamercolor[fg]{title in sidebar}
+        \usebeamerfont{title in sidebar}%
+        \insertshorttitle[width={0.9\beamer@width},center,respectlinebreaks]
+      }%
+      \hspace{0.05\beamer@width}
+      \vspace{2\baselineskip}\par%
+    \fi
+    \ifx\beamer@hideauthor\undefined% insert short author
+      \vspace{-\baselineskip}
+      \hspace{0.05\beamer@width}%
+      {%
+        \usebeamercolor[fg]{author in sidebar}
+        \usebeamerfont{author in sidebar}%
+        \insertshortauthor[width={0.9\beamer@width},center,respectlinebreaks]
+      }
+      \hspace{0.05\beamer@width}
+      \vspace{1.4\baselineskip}\par%
+    \fi
+    \insertverticalnavigation{\beamer@width}%
+    \strut\vfill%
+    \ifx\beamer@hideinst\undefined% insert short institute
+    {\vspace*{0.695in}
+    \begin{minipage}[c]{\beamer@width}
+    \begin{center}
+    \bf
+    \usebeamercolor[fg]{title in sidebar}
+    \usebeamerfont{subtitle in sidebar}%
+    \ifx\@shortevent\empty{\ifx\@event\empty SCL Presentation\else\@event\fi}\else\@shortevent\fi\\
+    \vspace*{0.07cm}
+     \vbox{%
+          {\bf
+            \usebeamercolor[fg]{title in sidebar}
+            \usebeamerfont{subtitle in sidebar}%
+            \insertshortdate[width={0.9\beamer@width},center,respectlinebreaks]    
+          }
+          \hspace{0.1\beamer@width}%
+          \vspace*{\baselineskip}
+          }%
+    \end{center}
+    \end{minipage}
+     
+      }
+    \fi
+    \ifx\beamer@shownavsym\undefined% insert navigation symbols
+      %do nothing
+    \else
+      %insert the navigation symbols if the sidebar is on the right
+      \ifx\beamer@sidebarside\beamer@lefttext %sidebar on the left
+        %do nothing
+      \else
+        \vspace*{-2\baselineskip}
+        \llap{\usebeamertemplate***{navigation symbols}\hskip0.7cm}
+        \vskip3pt
+      \fi
+    \fi
+  }
+  
+% When the sidebar is on the left, the default theme places a logo in the bottom right of the slide (this is NOT the case, when the sidebar is on the right). We remove this logo.
+  \ifx\beamer@sidebarside\beamer@lefttext %sidebar on the left
+    \defbeamertemplate*{sidebar right}{SCL theme}{%
+      \setbeamertemplate{sidebar left}[default]
+      \setbeamertemplate{sidebar canvas left}{\includegraphics[width=\beamer@width,height=\paperheight]{graphics/sb1}}
+      % remove the logo and insert the navigation symbols if option is set
+      \ifx\beamer@shownavsym\undefined% insert navigation symbols
+        %do nothing
+      \else %insert navigation symbols
+        \vfill%
+        \llap{\usebeamertemplate***{navigation symbols}\hskip0.7cm}
+        \vskip3pt
+      \fi
+    }
+  \fi
+
+  % current section in the sidebar
+  \defbeamertemplate*{section in sidebar}{SCL theme}{%
+    \vbox{%
+      \vskip2ex% add some extra space when inserting a new section
+      \sidebarnavitem{4pt}{section in sidebar}{%
+        \sidebarcurframe{\insertframenumber}%
+        \insertsectionhead
+      }
+    }
+  }
+
+  % all section in the sidebar but the current
+  \defbeamertemplate*{section in sidebar shaded}{SCL theme}{%
+    \vbox{%
+      \vskip1.5ex% add some extra space when inserting a new section
+      \sidebarnavitem{4pt}{section in sidebar shaded}{\insertsectionhead}
+    }
+  }
+
+  % current subsection in the sidebar
+  \defbeamertemplate*{subsection in sidebar}{SCL theme}{%
+    \sidebarnavitem{6pt}{subsection in sidebar}{
+      \sidebarcurframe{\insertframenumber}%
+      \insertsubsectionhead
+    }
+  }
+
+  % all subsection in the sidebar but the current
+  \defbeamertemplate*{subsection in sidebar shaded}{SCL theme}{%
+    \sidebarnavitem{6pt}{subsection in sidebar shaded}{\insertsubsectionhead}
+  }
+
+  % current subsubsection in the sidebar
+  \defbeamertemplate*{subsubsection in sidebar}{SCL theme}{%
+    \sidebarnavitem{8pt}{subsubsection in sidebar}{
+      \sidebarcurframe{\insertframenumber}%
+      \insertsubsubsectionhead
+    }  
+  }
+
+  % all subsubsection in the sidebar but the current
+  \defbeamertemplate*{subsubsection in sidebar shaded}{SCL theme}{%
+    \sidebarnavitem{8pt}{subsubsection in sidebar shaded}{\insertsubsubsectionhead} 
+  }
+  
+  %remove the navigation symbols from the title page if the option is not set
+  \ifx\beamer@shownavsym\undefined% insert navigation symbols
+    \setbeamertemplate{navigation symbols}{%
+      %disable navigation symbols
+    }
+  \fi
+  
+
+  
+
+}%end of beamer specific options
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Macros used in the theme 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the background in the header and the sidebar
+\newcommand{\SCLbackground}[0]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \ifx\beamer@sidebarside\beamer@lefttext% sidebar on the left
+      \coordinate (UC) at (\paperwidth,0); %upper right corner of the slide
+      \coordinate (LC) at (0,-\paperheight); %lower left corner of the slide
+      \coordinate (BS) at (\paperwidth,-\beamer@height); %start coordinate of the bar
+      \coordinate (BE) at (\beamer@width+\beamer@barwidth/2,-\paperheight); %end coordinate of the bar
+    \else% sidebar on the right
+      \coordinate (UC) at (-\paperwidth+\beamer@width,0); %upper left corner of the slide
+      \coordinate (LC) at (\beamer@width,-\paperheight); %lower right corner of the slide
+      \coordinate (BS) at (-\paperwidth+\beamer@width,-\beamer@height); %start coordinate of the bar
+      \coordinate (BE) at (-\beamer@barwidth/2,-\paperheight); %end coordinate of the bar
+      \coordinate (BEa) at (-\beamer@barwidth/2+0.05cm,-\paperheight); %end coordinate of the bar
+      \coordinate (HLR) at (\beamer@width,-\beamer@height+0.055cm); %lower right of the header
+      \coordinate (BSa) at (-\paperwidth+\beamer@width,-\beamer@height+0.055cm);
+    \fi
+    \coordinate (IS) at (BS -| BE); %intersection
+    \coordinate (ISa) at (BSa -| BEa); %intersection
+    \coordinate (logopos) at (\beamer@width/2,-\beamer@height/2);%coordinate of the logo
+    %draw the background of the header and the sidebar
+    {\usebeamercolor{headercolor}%
+    \fill[fill=bg] (BSa) -- (ISa)  |- (UC) --cycle;}
+    
+    %draw the thick line
+    {\usebeamercolor{barcolor}%
+    \draw[color=bg,line width=\beamer@barwidth] (BS) -- (IS) -- (BE);
+    }
+    %insert the total number of frames
+    {%
+      \usebeamercolor{palette sidebar primary}%
+      \usebeamercolor{barcolor}%
+      \usebeamerfont{subsection in sidebar}%
+      \node[fill=white,draw=barcolor.bg,circle,very thick,minimum width=3.5mm] at ([yshift=2mm] BE) {{\usebeamercolor[black]{subsection in sidebar}\inserttotalframenumber}};
+    }
+    %insert the logo
+    \node at (logopos) {\insertlogo};
+  \end{tikzpicture}%
+}
+
+% sidebar navigation item  
+\newcommand{\sidebarnavitem}[3]{%
+  \begin{beamercolorbox}[wd=\beamer@width,leftskip=#1,rightskip=1ex plus1fil,vmode]{#2}
+    \vbox{}% insert a blank line
+    #3\par%
+    \vbox{}% insert a blank line
+    \vskip-1.5ex%
+  \end{beamercolorbox}
+}
+
+% current frame number
+\newcommand{\sidebarcurframe}[1]{%
+  \begin{tikzpicture}[remember picture,overlay]
+  \coordinate (CS) at (0,0.8ex); % coordinate of the current section
+  \coordinate (CF) at (IS |- CS); % coordinate of the current frame number
+  {%
+    \usebeamercolor{white}%
+    \usebeamercolor{barcolor}%
+    \draw[color=fg,line width=\beamer@barwidth] (BS) -| (CF);
+    \node[fill=white,draw=barcolor.bg,circle,minimum width=3mm,thick] at (CF) {{\fontsize{4}{5}\selectfont{\usebeamercolor[black]{subsection in sidebar}#1}}};
+  }
+  \end{tikzpicture}%
+}
+
+\mode<all>
